@@ -17,12 +17,14 @@ class TestScraper(TestCase):
         self.assertEqual(False, single_county_run.daemon)
 
     def test_run_for_county(self):
-        single_county_run_args = ['-c', 'marion']
+        single_county_run_args = ['-c', 'marion', '-y', '21', '-m', '1']
         output = app_main(get_parser().parse_args(single_county_run_args))
+        self.assertIsNotNone(output)
 
     def test_run_for_single_case_number(self):
         single_case_number_args = ['-n', '49K01-2101-EV-000399']
         output = app_main(get_parser().parse_args(single_case_number_args))
+        self.assertIsNotNone(output)
 
 
 if __name__ == '__main__':

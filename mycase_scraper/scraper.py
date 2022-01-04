@@ -1,16 +1,48 @@
 from argparse import ArgumentParser, Namespace
 
 from loguru import logger
+from selenium.common.exceptions import TimeoutException
 
-from mycase_scraper.utils.driver import CaseDetails, Driver, SearchItem
-from mycase_scraper.utils.utils import get_current_month_as_str, get_current_year_as_str
+from mycase_scraper.db.sheets import Sheets
+from mycase_scraper.settings import Settings
+from mycase_scraper.utils.courts import courts_for_county
+from mycase_scraper.utils.driver import CaseDetails, Driver, SearchItem, SearchResults
+from mycase_scraper.utils.utils import format_year_month, get_current_month_as_str, get_current_year_as_str
 
 
 class Scraper:
 
     @staticmethod
     def run_for_county(args: Namespace):
-        pass
+
+        detailed_cases: [CaseDetails] = []
+        for court in courts_for_county(args.county):
+            try:
+                search_results: SearchResults = Driver.instance().get_driver().get_search_results_list(
+                    court,
+                    format_year_month(args.year, args.month)
+                )
+                for case in search_results.values():
+                    try:
+                        detailed_cases.append(
+                            Driver.instance().get_driver().get_detailed_case_info(case)
+                        )
+                    except TimeoutException as tx:
+                        logger.exception(
+                            f'Exception while trying to get details for case {case.get_case_number()}: {tx}')
+                    except Exception as ex:
+                        logger.exception(
+                            f'Exception while trying to get details for case {case.get_case_number()}: {ex}')
+            except Exception as ex:
+                logger.exception(f'Exception while getting docket for {court} with args {args}: {ex}')
+
+        sheets = Sheets(Settings)
+        for details in detailed_cases:
+            try:
+                sheets.add_raw_data_for_case(details)
+            except Exception as ex:
+                logger.exception(
+                    f'Could not add data for case {details.get_case_number()} to sheet {details.get_raw_data()} :{ex}')
 
     @staticmethod
     def run_for_single_case_number(args: Namespace):
@@ -24,7 +56,8 @@ def get_parser():
 
     # Scope of what to scrape
     parser.add_argument('-n', '--number', help='Case Number of single case to scrape')
-    parser.add_argument('-c', '--county', help='Name of county to scrape, (Use quotes if there\'s a space)')
+    parser.add_argument('-c', '--county',
+                        help='Two digit code of county to scrape, (counties found here: https://www.in.gov/courts/rules/admin/index.html#_Toc77764569)')
 
     # Time range
     parser.add_argument('-m', '--month', help='Month to focus on', default=get_current_month_as_str())
