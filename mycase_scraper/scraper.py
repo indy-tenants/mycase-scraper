@@ -17,15 +17,18 @@ class Scraper:
 
         detailed_cases: [CaseDetails] = []
         for court in courts_for_county(args.county):
+
             try:
-                search_results: SearchResults = Driver.instance().get_driver().get_search_results_list(
+                search_results: SearchResults = Driver.instance().get_search_results_list(
                     court,
                     format_year_month(args.year, args.month)
                 )
+
                 for case in search_results.values():
+
                     try:
                         detailed_cases.append(
-                            Driver.instance().get_driver().get_detailed_case_info(case)
+                            Driver.instance().get_detailed_case_info(case)
                         )
                     except TimeoutException as tx:
                         logger.exception(
@@ -33,6 +36,7 @@ class Scraper:
                     except Exception as ex:
                         logger.exception(
                             f'Exception while trying to get details for case {case.get_case_number()}: {ex}')
+
             except Exception as ex:
                 logger.exception(f'Exception while getting docket for {court} with args {args}: {ex}')
 

@@ -652,7 +652,8 @@ COURTS = {
 
 
 def courts_for_county(county_code: str):
-    if county_code in COURTS.keys():
+    if county_code in COUNTY_CODES.keys():
         return [court for court in COURTS.keys() if court[:2] == county_code]
     else:
         logger.info(f'County code {county_code} not found')
+        return []

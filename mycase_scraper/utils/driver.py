@@ -217,7 +217,7 @@ class Driver:
         self.instance().go(URI.get_case_url(case_item.get_case_token()))
         return self.get_details_from_network_requests(case_item)
 
-    def get_search_results_list(self, court_code, year_month) -> SearchResults:
+    def get_search_results_list(self, court_code: str, year_month: str) -> SearchResults:
         self.instance().go(URI.get_search_url_with_court_and_date(court_code, year_month))
         try:
             def check():
