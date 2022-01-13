@@ -1,6 +1,8 @@
 ### Intellij ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+.idea/*.xml
+.idea/*.iml
 
 # User-specific stuff
 .idea/**/workspace.xml
@@ -295,3 +297,6 @@ tags
 [._]*.un~
 # GCP Service Account File
 service_account.json
+
+# App config
+config.json

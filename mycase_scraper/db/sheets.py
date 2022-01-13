@@ -3,7 +3,7 @@ from sheetfu.client import SpreadsheetApp
 from sheetfu.model import Range
 from sheetfu.modules.table import Table
 
-from mycase_scraper.utils.driver import CaseDetails
+from utils.case import CaseDetails
 
 
 class Sheets:
@@ -23,7 +23,7 @@ class Sheets:
         if self.SETTINGS.PRIMARY_SHEET_NAME.value not in sheet_names:
             logger.info(f'Creating new primary sheet called: {self.SETTINGS.PRIMARY_SHEET_NAME.value}')
             self.spreadsheet.create_sheets(self.SETTINGS.PRIMARY_SHEET_NAME.value)
-            detailed_item: CaseDetails = CaseDetails({})
+            detailed_item: CaseDetails = CaseDetails()
             header_range: Range = self.spreadsheet.get_sheet_by_name(
                 self.SETTINGS.PRIMARY_SHEET_NAME.value).get_range_from_a1(
                 f'A1:{chr(64 + len(detailed_item.get_details().keys()))}1'
@@ -36,7 +36,7 @@ class Sheets:
         if self.SETTINGS.ARCHIVE_SHEET_NAME.value not in sheet_names:
             logger.info(f'Creating new archive sheet called: {self.SETTINGS.ARCHIVE_SHEET_NAME.value}')
             self.spreadsheet.create_sheets(self.SETTINGS.ARCHIVE_SHEET_NAME.value)
-            detailed_item: CaseDetails = CaseDetails({})
+            detailed_item: CaseDetails = CaseDetails()
             header_range: Range = self.spreadsheet.get_sheet_by_name(
                 self.SETTINGS.ARCHIVE_SHEET_NAME.value).get_range_from_a1(
                 f'A1:{chr(64 + len(detailed_item.get_details().keys()))}1'

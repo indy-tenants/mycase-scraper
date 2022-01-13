@@ -1,5 +1,4 @@
 class CSSSelectorBuilder:
-
     _selector = str()
 
     def id(self, _id):
@@ -14,8 +13,8 @@ class CSSSelectorBuilder:
         self._selector += f" {tag}"
         return self
 
-    def clazz(self, clazz):
-        self._selector += f" .{clazz}"
+    def withClazz(self, clazz):
+        self._selector += f".{clazz}"
         return self
 
     def attribute(self, name, value):

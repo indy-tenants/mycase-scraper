@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from mycase_scraper.utils.driver import CaseStatus, Driver, SearchItem
+from mycase_scraper.utils.driver import Driver
+from utils.case import CaseStatus, SearchItem
 
 
 class TestMyCaseDriver(TestCase):
