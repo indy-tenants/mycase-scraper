@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from mycase_scraper.db.sheets import Sheets
 from mycase_scraper.settings import Settings
-from utils.case import CaseDetails
+from mycase_scraper.utils.case import CaseDetails
 
 
 class TestSheets(TestCase):

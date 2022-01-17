@@ -3,7 +3,7 @@ from sheetfu.client import SpreadsheetApp
 from sheetfu.model import Range
 from sheetfu.modules.table import Table
 
-from utils.case import CaseDetails
+from mycase_scraper.utils.case import CaseDetails, SearchItem
 
 
 class Sheets:
@@ -23,27 +23,27 @@ class Sheets:
         if self.SETTINGS.PRIMARY_SHEET_NAME.value not in sheet_names:
             logger.info(f'Creating new primary sheet called: {self.SETTINGS.PRIMARY_SHEET_NAME.value}')
             self.spreadsheet.create_sheets(self.SETTINGS.PRIMARY_SHEET_NAME.value)
-            detailed_item: CaseDetails = CaseDetails()
+            detailed_item: CaseDetails = CaseDetails(SearchItem({}))
             header_range: Range = self.spreadsheet.get_sheet_by_name(
                 self.SETTINGS.PRIMARY_SHEET_NAME.value).get_range_from_a1(
-                f'A1:{chr(64 + len(detailed_item.get_details().keys()))}1'
+                f'A1:{chr(64 + len(detailed_item.get_data().keys()))}1'
             )
             header_range.set_values(
                 [
-                    [value for value in detailed_item.get_details().keys()]
+                    [value for value in detailed_item.get_data().keys()]
                 ]
             )
         if self.SETTINGS.ARCHIVE_SHEET_NAME.value not in sheet_names:
             logger.info(f'Creating new archive sheet called: {self.SETTINGS.ARCHIVE_SHEET_NAME.value}')
             self.spreadsheet.create_sheets(self.SETTINGS.ARCHIVE_SHEET_NAME.value)
-            detailed_item: CaseDetails = CaseDetails()
+            detailed_item: CaseDetails = CaseDetails(SearchItem({}))
             header_range: Range = self.spreadsheet.get_sheet_by_name(
                 self.SETTINGS.ARCHIVE_SHEET_NAME.value).get_range_from_a1(
-                f'A1:{chr(64 + len(detailed_item.get_details().keys()))}1'
+                f'A1:{chr(64 + len(detailed_item.get_data().keys()))}1'
             )
             header_range.set_values(
                 [
-                    [value for value in detailed_item.get_details().keys()]
+                    [value for value in detailed_item.get_data().keys()]
                 ]
             )
 
@@ -52,5 +52,5 @@ class Sheets:
             spreadsheet=self.spreadsheet,
             sheet_name=self.SETTINGS.ARCHIVE_SHEET_NAME.value
         )
-        table.add_one(data.get_raw_data())
+        table.add_one(data.get_data())
         table.commit()

@@ -1,7 +1,7 @@
 from unittest import TestCase
 
+from mycase_scraper.utils.case import CaseStatus, SearchItem
 from mycase_scraper.utils.driver import Driver
-from utils.case import CaseStatus, SearchItem
 
 
 class TestMyCaseDriver(TestCase):
@@ -31,7 +31,7 @@ class TestMyCaseDriver(TestCase):
     def test_get_search_result(self):
         result: SearchItem = Driver.instance().get_search_result('49K01-2101-EV-000399')
         self.assertEqual(40229763, result.get_id())
-        self.assertIs(CaseStatus.DECIDED, result.get_case_status())
+        self.assertIs(CaseStatus.DECIDED.value, result.get_case_status())
         self.assertEqual(False, result.get_is_active())
 
     def test_get_detailed_case_results(self):

@@ -20,7 +20,7 @@ logger.debug('starting webdriver')
 ONE_SECOND = 1
 DEFAULT_SLEEP_INTERVAL = 3
 DEFAULT_WAIT_TIME = 3
-MAX_TIMEOUT = 30
+MAX_TIMEOUT = 60
 
 
 def get_options() -> Options:

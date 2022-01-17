@@ -9,9 +9,10 @@ load_dotenv()
 
 
 class Settings(Enum):
+
     # App Settings
     APP_HOME_DIRECTORY = dirname(abspath(__file__))
-    APP_CONFIG_FILENAME = abspath(join(APP_HOME_DIRECTORY.value, 'config.json'))
+    APP_CONFIG_FILENAME = abspath(join(APP_HOME_DIRECTORY, 'config.json'))
 
     # Selenium
     CHROME_DEBUGGER_ADDRESS = getenv('CHROME_DEBUGGER_ADDRESS') or 9222
@@ -30,6 +31,9 @@ class Settings(Enum):
     SUPABASE_URL = getenv('SUPABASE_URL')
     SUPABASE_KEY = getenv('SUPABASE_KEY')
     SUPABASE_SERVICE_ROLE_SECRET = getenv('SUPABASE_SERVICE_ROLE_SECRET')
+
+    # Sqlite3
+    SQLITE3_FILE_NAME = join(APP_HOME_DIRECTORY, 'db.sqlite3')
 
 
 logger.debug(f'Using settings {Settings}')
