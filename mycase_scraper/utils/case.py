@@ -19,6 +19,9 @@ class AbstractDataParser:
 
     _data: dict = {}
 
+    def __str__(self):
+        return str(self._data)
+
     # generic getter's for search data with type checking
 
     def get_type_field_from_data(self, field: str, func: Callable = lambda x: x) -> Union[bool, date, dict, int, list, str, time]:
@@ -99,6 +102,9 @@ class CaseEvent(AbstractDataParser):
         'AEvent'           : None,
     }
 
+    def __str__(self):
+        return str(self._data)
+
     def __init__(self, data: dict):
         self._data: dict = data
 
@@ -150,6 +156,9 @@ class CaseParty(AbstractDataParser):
         'Transactions'       : None,
     }
 
+    def __str__(self):
+        return str(self._data)
+
     def __init__(self, data: dict):
         self._data: dict = data
 
@@ -165,7 +174,7 @@ class CaseParty(AbstractDataParser):
             'address'             : self.get_dict_field_from_data('Address'),
             'removed_date'        : self.get_date_field_from_data('RemovedDate'),
             'removed_reason'      : self.get_str_field_from_data('RemovedReason'),
-            'attorney'            : self.get_dict_field_from_data('Attorneys'),
+            'attorney'            : self.get_list_field_from_data('Attorneys'),
         }
 
 
@@ -202,6 +211,9 @@ class CaseDetails(SearchItem):
         'CommCourtFlag'     : None,
     }
 
+    def __str__(self):
+        return str(self._data)
+
     def __init__(self, search_item: SearchItem, details=None):
         super(CaseDetails, self).__init__(search_item.get_data())
         if 'InvalidToken' in details and details.get('InvalidToken') is False:
@@ -215,12 +227,12 @@ class CaseDetails(SearchItem):
             'pk_case_id'          : self.get_int_field_from_data('CaseID'),
             'uniform_case_number' : self.get_str_field_from_data('CaseNumber'),
             # TODO make reference table for court ids
-            # 'fk_court_id': 'smallint',
+            # 'fk_court_id'         : self.get_str_field_from_data('Court'),
             'file_date'           : self.get_date_field_from_data('FileDate'),
             'case_status'         : self.get_str_field_from_data('CaseStatus'),
             'case_status_date'    : self.get_date_field_from_data('CaseStatusDate'),
             # TODO make reference table for case_type
-            # 'fk_case_type_id': 'smallint',
+            # 'fk_case_type_id'     : 'smallint',
             'style'               : self.get_str_field_from_data('Style'),
             'is_active'           : self.get_is_active(),
             'appear_by_date'      : self.get_date_field_from_data('AppearByDate'),
@@ -240,12 +252,16 @@ class CaseDetails(SearchItem):
 
 
 class SearchResults:
-    _results = {}
+
+    _data = {}
+
+    def __str__(self):
+        return str(self._data)
 
     def add(self, item: SearchItem):
-        if item.get_case_number() not in self._results.keys():
+        if item.get_case_number() not in self._data.keys():
             logger.debug(f'Adding item with case number {item.get_case_number()}')
-            self._results.update({item.get_case_number(): item})
+            self._data.update({item.get_case_number(): item})
         else:
             logger.warning(f'Item with case number {item.get_case_number()} already exists in set')
 
@@ -255,20 +271,20 @@ class SearchResults:
             self.add(i)
 
     def get_total(self):
-        logger.debug(f'Getting total results, current: {len(self._results)}')
-        return len(self._results.keys())
+        logger.debug(f'Getting total results, current: {len(self._data)}')
+        return len(self._data.keys())
 
     def keys(self):
-        logger.debug(f'Getting result keys {self._results.keys()}')
-        return self._results.keys()
+        logger.debug(f'Getting result keys {self._data.keys()}')
+        return self._data.keys()
 
     def values(self) -> [SearchItem]:
-        logger.debug(f'Getting result values {self._results.values()}')
-        return self._results.values()
+        logger.debug(f'Getting result values {self._data.values()}')
+        return self._data.values()
 
     def find_by_case_number(self, case_num: str):
-        if case_num in self._results.keys():
+        if case_num in self._data.keys():
             logger.debug(f'Found SearchItem for case number {case_num}')
-            return self._results.get(case_num)
+            return self._data.get(case_num)
         else:
             logger.debug(f'Could not find SearchItem for case number {case_num}')

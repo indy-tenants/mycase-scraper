@@ -73,6 +73,8 @@ class Driver:
         self.get_driver().get(URI.SEARCH)
         return self
 
+    # Waiters
+
     def wait_for_element_selector(self, selector):
         logger.debug(f'Waiting for selector \'{selector}\' to load')
         try:
@@ -90,17 +92,16 @@ class Driver:
         except TimeoutException:
             logger.exception(f'Timed out waiting for selector \'{selector}\'')
 
-    def get_search_cases_response(self) -> list:
-        requests = filter(lambda r: r.url == URI.SEARCH_CASES, self.get_driver().requests)
-        return [r.response for r in requests]
-
-    def get_search_result(self, case_num: str) -> SearchItem:
-        logger.debug(f'Searching for single case with case number {case_num}')
-        self.instance().go(URI.get_case_url_for_case_number(case_num))
+    def wait_for_search_results(self):
         self.wait_for_element_selector(
             CSSSelectorBuilder().tag('tr').withClazz('result-row').build()
         )
-        return self.get_search_results_from_network_requests().find_by_case_number(case_num)
+
+    # data getters
+
+    # def get_search_cases_response(self) -> list:
+    #     requests = filter(lambda r: r.url == URI.SEARCH_CASES, self.get_driver().requests)
+    #     return [r.response for r in requests]
 
     def get_detailed_case_info(self, case_item: SearchItem) -> CaseDetails:
         logger.debug(f'Getting details for case number {case_item.get_case_number()}')
@@ -130,37 +131,48 @@ class Driver:
                 return running_total_match.groupdict()['upper_current'] == running_total_match.groupdict()['total']
 
             while not check():
+                sleep(ONE_SECOND)
                 next_button = WebDriverWait(self.get_driver(), DEFAULT_WAIT_TIME).until(
                     presence_of_element_located(
                         (
                             By.CSS_SELECTOR,
-                            CSSSelectorBuilder().tag('button').withAttribute('title',
-                                                                             'Go to next result page').build()
+                            CSSSelectorBuilder().tag('button').withAttribute('title', 'Go to next result page').build()
                         )
                     )
                 )
                 next_button.click()
-                sleep(ONE_SECOND)
                 WebDriverWait(self.get_driver(), DEFAULT_WAIT_TIME).until(
-                    presence_of_element_located((By.CLASS_NAME, 'results')))
+                    presence_of_element_located((By.CLASS_NAME, 'results'))
+                )
         except TimeoutException as ex:
             logger.exception(f'Timed out waiting on next button, assume we have all the cases and move on {ex}')
         except Exception as ex:
             logger.exception(f'{ex}')
 
+    # Collect network requests
+
+    def get_search_result(self, case_num: str) -> SearchItem:
+        logger.debug(f'Searching for single case with case number {case_num}')
+        self.instance().go(URI.get_case_url_for_case_number(case_num))
+        self.wait_for_search_results()
+        return self.get_search_results_from_network_requests().find_by_case_number(case_num)
+
     def get_search_results_list(self, court_code: str, year_month: str) -> SearchResults:
+        logger.debug(f'Searching for list of cases for court code {court_code}')
         self.instance().go(URI.get_search_url_with_court_and_date(court_code, year_month))
         self.navigate_and_collect_search_results()
         return self.get_search_results_from_network_requests()
 
+    # Get network requests
+
     def get_search_results_from_network_requests(self) -> SearchResults:
         filtered_requests = list(
             filter(
-                lambda r: r.response.status_code == 200 and match(URI.SEARCH_CASES_RE, r.url),
+                lambda r: r.response is not None and r.response.status_code == 200 and match(URI.SEARCH_CASES_RE, r.url),
                 self.instance().get_driver().requests
             )
         )
-        results = SearchResults()
+        results: SearchResults = SearchResults()
         for req in filtered_requests:
             json_body = loads(req.response.body)
             json_results = json_body.get('Results')
@@ -172,11 +184,12 @@ class Driver:
         return results
 
     def get_details_from_network_requests(self, search_item: SearchItem) -> CaseDetails:
+
         logger.debug(f'Trying to get details from network requests')
         try:
-            filtered_requests = list(
+            filtered_requests: list = list(
                 filter(
-                    lambda r: r.response.status_code == 200 and match(URI.CASE_SUMMARY_RE, r.url),
+                    lambda r: r.response is not None and r.response.status_code == 200 and match(URI.CASE_SUMMARY_RE, r.url),
                     self.instance().get_driver().requests
                 )
             )

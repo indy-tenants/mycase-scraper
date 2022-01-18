@@ -29,9 +29,10 @@ class Scraper:
             for case in search_results.values():
 
                 try:
-                    detailed_cases.append(
-                        Driver.instance().get_detailed_case_info(case.get_data())
-                    )
+                    if case:
+                        detailed_cases.append(
+                            Driver.instance().get_detailed_case_info(case)
+                        )
                 except TimeoutException as tx:
                     logger.exception(
                         f'Exception while trying to get details for case {case}: {tx}')
@@ -46,11 +47,11 @@ class Scraper:
     @staticmethod
     def run_for_single_case_number(args: Namespace) -> CaseDetails:
         logger.debug(f'Searching for case number: \'{args.number}\'')
-        result: SearchItem = Driver.instance().get_search_result(args.number)
-        logger.debug(f'Getting details for case number \'{args.number}\'')
-        details: CaseDetails = Driver.instance().get_detailed_case_info(result)
-        logger.debug(f'Found case details \'{details.get_data() if details is not None else None}\'')
-        return details
+        search_item: SearchItem = Driver.instance().get_search_result(args.number)
+        logger.debug(f'Getting case_details for case number \'{args.number}\'')
+        case_details: CaseDetails = Driver.instance().get_detailed_case_info(search_item)
+        logger.debug(f'Found case case_details \'{case_details.get_data() if case_details is not None else None}\'')
+        return case_details
 
 
 def get_parser():
@@ -78,12 +79,12 @@ def main(args: Namespace):
 
     try:
         if args.court:
-            details: [CaseDetails] = Scraper.run_for_court(args)
+            case_list: list = Scraper.run_for_court(args, args.court)
             return PersistenceBuilder.get_context(
                 PersistenceStrategy(
                     Settings.PERSISTENCE_STRATEGY.value.upper()
                 )
-            ).save_case(details)
+            ).save_cases(case_list)
         elif args.county:
             return Scraper.run_for_county(args)
         elif args.number:

@@ -33,6 +33,11 @@ class SupabaseStrategy():
                 logger.exception(f'Could not authenticate {ex}')
         return cls._instance
 
+    def save_cases(self, case_list: [CaseDetails]):
+        for case in case_list:
+            if case:
+                self.save_case(case)
+
     def save_case(self, case: CaseDetails):
         try:
             responses = [self.supabase.table('case').upsert(case.get_case_dict_for_persistence()).execute()]
@@ -54,8 +59,6 @@ class SupabaseStrategy():
             return responses
 
         except AttributeError as ae:
-            logger.exception(f'Failed to extract item from data for case \'{case.get_data()}\' : {ae}')
+            logger.exception(f'Failed to extract item from data for case \'{case}\' : {ae}')
         except Exception as ex:
-            logger.exception(f'Failed to save case record \'{case.get_data()}\'\n : {ex}')
-
-
+            logger.exception(f'Failed to save case record \'{case}\'\n : {ex}')

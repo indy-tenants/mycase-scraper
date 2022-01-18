@@ -30,11 +30,11 @@ class TestMyCaseDriver(TestCase):
 
     def test_get_search_result(self):
         result: SearchItem = Driver.instance().get_search_result('49K01-2101-EV-000399')
-        self.assertEqual(40229763, result.get_id())
-        self.assertIs(CaseStatus.DECIDED.value, result.get_case_status())
+        self.assertEqual(40229763, result.get_int_field_from_data('CaseID'))
+        self.assertIs(CaseStatus.DECIDED.value, result.get_str_field_from_data('CaseStatus'))
         self.assertEqual(False, result.get_is_active())
 
     def test_get_detailed_case_results(self):
         result: SearchItem = Driver.instance().get_search_result('49K01-2101-EV-000399')
         details = Driver.instance().get_detailed_case_info(result)
-        self.assertEqual(result.get_id(), details.get_case_key())
+        self.assertEqual(result.get_int_field_from_data('CaseID'), details.get_case_key())
