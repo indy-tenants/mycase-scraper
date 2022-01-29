@@ -300,3 +300,6 @@ service_account.json
 
 # App config
 config.json
+
+db.sqlite3-shm
+db.sqlite3-wal
