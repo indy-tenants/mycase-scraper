@@ -1,0 +1,7 @@
+__title__ = 'mycase_scraper'
+__version__ = '0.1.0'
+__author__ = 'Mikado'
+__author_email__ = 'info@indytenants.org'
+__description__ = 'Scraper for getting case details from mycase'
+__url__ = 'https://github.com/indy-tenants/mycase-scraper'
+__license__ = 'MIT'

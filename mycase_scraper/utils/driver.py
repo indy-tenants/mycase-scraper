@@ -1,3 +1,4 @@
+import re
 from json import loads
 from re import match
 from time import sleep
@@ -17,10 +18,12 @@ from mycase_scraper.utils.uri import URI
 
 logger.debug('starting webdriver')
 
-ONE_SECOND = 1
-DEFAULT_SLEEP_INTERVAL = 3
-DEFAULT_WAIT_TIME = 3
-MAX_TIMEOUT = 60
+SECONDS = 1
+MINUTES = 1
+SHORT_TIMEOUT = 3 * SECONDS
+DEFAULT_TIMEOUT = 10 * SECONDS
+MAX_TIMEOUT = 30 * SECONDS
+USER_INPUT_TIMEOUT = 5 * MINUTES
 
 
 def get_options() -> Options:
@@ -36,7 +39,7 @@ class Driver:
     """
 
     _instance = None
-    _driver = None
+    _driver: Chrome = None
 
     @classmethod
     def _init_driver(cls, options=get_options()):
@@ -60,12 +63,13 @@ class Driver:
         self.get_driver().close()
         self.get_driver().quit()
 
-    def get_driver(self):
+    def get_driver(self) -> Chrome:
         return self._driver
 
     def go(self, uri):
         logger.info(f'Navigating to url {uri}')
         self.get_driver().get(uri)
+        self.check_for_captcha()
         return self
 
     def go_home(self):
@@ -75,12 +79,12 @@ class Driver:
 
     # Waiters
 
-    def wait_for_element_selector(self, selector):
+    def wait_for_element_selector(self, selector, timeout=MAX_TIMEOUT):
         logger.debug(f'Waiting for selector \'{selector}\' to load')
         try:
             return WebDriverWait(
                 self.get_driver(),
-                MAX_TIMEOUT
+                timeout
             ).until(
                 presence_of_element_located(
                     (
@@ -97,6 +101,20 @@ class Driver:
             CSSSelectorBuilder().tag('tr').withClazz('result-row').build()
         )
 
+    def check_for_captcha(self):
+        try:
+            return self.wait_for_element_selector(
+                CSSSelectorBuilder().id('CaptchaModal').build(),
+                timeout=SHORT_TIMEOUT
+            )
+        except TimeoutException:
+            return None
+
+    def wait_while_captcha_modal_on_screen(self):
+        while self.check_for_captcha():
+            logger.info('Captcha modal detected on screen, waiting')
+            sleep(MAX_TIMEOUT)
+
     # data getters
 
     # def get_search_cases_response(self) -> list:
@@ -112,27 +130,25 @@ class Driver:
         )
         return self.get_details_from_network_requests(case_item)
 
-    def navigate_and_collect_search_results(self):
+    def navigate_through_set_of_search_results(self):
         try:
             def check():
-                running_total_selector = '#OD_BODY > div:nth-child(4) > table > tbody > tr > td.pad-all-0.va-bottom.text-right.width-30p.hidden-xs > div > div:nth-child(1) > span'
                 running_total_regex = r'(?P<lower_current>\d*) to (?P<upper_current>\d*) of (?P<total>\d*)'
 
-                running_total = WebDriverWait(self.get_driver(), DEFAULT_WAIT_TIME).until(
-                    presence_of_element_located((By.CSS_SELECTOR, running_total_selector))
-                )
-
-                running_total_match = match(running_total_regex, running_total.text)
+                running_total_match: dict = re.search(
+                    running_total_regex,
+                    self.get_driver().page_source
+                ).groupdict()
 
                 if running_total_match is None:
                     logger.error('Cant find totals on screen, bailing out')
                     return True
 
-                return running_total_match.groupdict()['upper_current'] == running_total_match.groupdict()['total']
+                return running_total_match['upper_current'] == running_total_match['total']
 
             while not check():
-                sleep(ONE_SECOND)
-                next_button = WebDriverWait(self.get_driver(), DEFAULT_WAIT_TIME).until(
+                sleep(SECONDS)
+                next_button = WebDriverWait(self.get_driver(), DEFAULT_TIMEOUT).until(
                     presence_of_element_located(
                         (
                             By.CSS_SELECTOR,
@@ -141,11 +157,11 @@ class Driver:
                     )
                 )
                 next_button.click()
-                WebDriverWait(self.get_driver(), DEFAULT_WAIT_TIME).until(
+                WebDriverWait(self.get_driver(), DEFAULT_TIMEOUT).until(
                     presence_of_element_located((By.CLASS_NAME, 'results'))
                 )
-        except TimeoutException as ex:
-            logger.exception(f'Timed out waiting on next button, assume we have all the cases and move on {ex}')
+        except TimeoutException:
+            logger.exception(f'Timed out waiting on next button, assume we have all the cases and move on')
         except Exception as ex:
             logger.exception(f'{ex}')
 
@@ -158,10 +174,13 @@ class Driver:
         return self.get_search_results_from_network_requests().find_by_case_number(case_num)
 
     def get_search_results_list(self, court_code: str, year_month: str) -> SearchResults:
+        self.navigate_search_results_for_court(court_code, year_month)
+        return self.get_search_results_from_network_requests()
+
+    def navigate_search_results_for_court(self, court_code, year_month):
         logger.debug(f'Searching for list of cases for court code {court_code}')
         self.instance().go(URI.get_search_url_with_court_and_date(court_code, year_month))
-        self.navigate_and_collect_search_results()
-        return self.get_search_results_from_network_requests()
+        self.navigate_through_set_of_search_results()
 
     # Get network requests
 

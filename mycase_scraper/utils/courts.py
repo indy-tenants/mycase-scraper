@@ -651,11 +651,12 @@ COURTS = {
 }
 
 
-def courts_for_county(county_code: str):
+def courts_for_county(county_code: str, court_type_filter: callable = None):
     if county_code in COUNTY_CODES.keys():
         court_list = [court for court in COURTS.keys() if court[:2] == county_code]
-        logger.debug(f'Found courts {court_list} for county {county_code}')
-        return court_list
+        filtered_court_list = list(filter(court_type_filter, court_list)) if court_type_filter else court_list
+        logger.debug(f'Found courts {filtered_court_list} for county {county_code}')
+        return filtered_court_list
     else:
         logger.info(f'County code {county_code} not found')
         return []

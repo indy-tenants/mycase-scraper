@@ -34,9 +34,11 @@ class SupabaseStrategy():
         return cls._instance
 
     def save_cases(self, case_list: [CaseDetails]):
+        responses = []
         for case in case_list:
             if case:
-                self.save_case(case)
+                responses.append(self.save_case(case))
+        return responses
 
     def save_case(self, case: CaseDetails):
         try:

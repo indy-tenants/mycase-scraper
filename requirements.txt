@@ -1,10 +1,11 @@
-loguru==0.5.3
+loguru==0.6.0
 python-dotenv==0.19.2
 selenium==4.1.0
+selenium-wire==4.6.0
 sheetfu==1.6.1
 utils==1.0.1
 
-supabase~=0.2.0
-gotrue~=0.3.5
+supabase==0.3.2
+gotrue==0.5.0
 python-dateutil~=2.8.2
 peewee~=3.14.8

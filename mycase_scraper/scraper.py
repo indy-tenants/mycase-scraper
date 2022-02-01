@@ -13,36 +13,60 @@ from mycase_scraper.utils.utils import format_year_month, get_current_month_as_s
 
 class Scraper:
 
-    @staticmethod
-    def run_for_county(args: Namespace):
+    search_results: SearchResults = SearchResults()
 
-        for court in courts_for_county(args.county):
-            Scraper.run_for_court(args, court)
-
-    @staticmethod
-    def run_for_court(args, court) -> [CaseDetails]:
+    def run_for_county(self, args: Namespace, court_type_filter) -> list[CaseDetails]:
         try:
-            Driver.instance().get_search_results_list(court, format_year_month(args.year, args.month))
-            search_results: SearchResults = Driver.instance().get_search_results_from_network_requests()
+            for court in courts_for_county(args.county, court_type_filter=court_type_filter):
+                Driver.instance().navigate_search_results_for_court(
+                    court,
+                    format_year_month(args.year, args.month)
+                )
 
-            detailed_cases: [CaseDetails] = []
-            for case in search_results.values():
-
-                try:
-                    if case:
-                        detailed_cases.append(
-                            Driver.instance().get_detailed_case_info(case)
-                        )
-                except TimeoutException as tx:
-                    logger.exception(
-                        f'Exception while trying to get details for case {case}: {tx}')
-                except Exception as ex:
-                    logger.exception(
-                        f'Exception while trying to get details for case {case}: {ex}')
-
-            return detailed_cases
+            self.search_results.add_list(
+                Driver.instance().get_search_results_from_network_requests().values()
+            )
+            logger.info(f'Getting details for \'{self.search_results.get_total()}\' search results')
+            return self.get_details_for_search_results(
+                self.search_results
+            )
         except Exception as ex:
-            logger.exception(f'Exception while getting docket for {court} with args {args}: {ex}')
+            logger.exception(f'Exception while getting cases for county \'{args.county}\' with args {args}: {ex}')
+
+    def run_for_court(self, args: Namespace) -> list[CaseDetails]:
+        try:
+            self.search_results.add_list(
+                Driver.instance().get_search_results_list(
+                    args.court,
+                    format_year_month(args.year, args.month)
+                ).values()
+            )
+
+            logger.info(f'Getting details for \'{self.search_results.get_total()}\' search results')
+            return self.get_details_for_search_results(
+                self.search_results
+            )
+
+        except Exception as ex:
+            logger.exception(f'Exception while getting docket for {args.court} with args {args}: {ex}')
+
+    @staticmethod
+    def get_details_for_search_results(search_results: SearchResults) -> list[CaseDetails]:
+        detailed_cases: [CaseDetails] = list()
+        for case in search_results.values():
+            try:
+                if case:
+                    detailed_cases.append(
+                        Driver.instance().get_detailed_case_info(case)
+                    )
+            except TimeoutException as tx:
+                logger.exception(
+                    f'Exception while trying to get details for case \'{case}\' : \'{tx}\'')
+            except Exception as ex:
+                logger.exception(
+                    f'Exception while trying to get details for case \'{case}\' : \'{ex}\'')
+            finally:
+                return detailed_cases
 
     @staticmethod
     def run_for_single_case_number(args: Namespace) -> CaseDetails:
@@ -63,6 +87,7 @@ def get_parser():
     parser.add_argument('-c', '--county',
                         help='Two digit code of county to scrape, (counties found here: https://www.in.gov/courts/rules/admin/index.html#_Toc77764569)')
     parser.add_argument('-C', '--court', help='Five alpha numeric character code identifying the court to scrape from')
+    parser.add_argument('-F', '--court-filter', dest='filter', help='Filter by court type')
 
     # Time range
     parser.add_argument('-m', '--month', help='Month to focus on', default=get_current_month_as_str())
@@ -79,22 +104,29 @@ def main(args: Namespace):
 
     try:
         if args.court:
-            case_list: list = Scraper.run_for_court(args, args.court)
+            case_list: list[CaseDetails] = Scraper().run_for_court(args)
             return PersistenceBuilder.get_context(
                 PersistenceStrategy(
                     Settings.PERSISTENCE_STRATEGY.value.upper()
                 )
             ).save_cases(case_list)
         elif args.county:
-            return Scraper.run_for_county(args)
+            case_list: list[CaseDetails] = Scraper().run_for_county(
+                args,
+                court_type_filter=lambda c: args.filter.lower() in c.lower()
+            )
+            return PersistenceBuilder.get_context(
+                PersistenceStrategy(
+                    Settings.PERSISTENCE_STRATEGY.value.upper()
+                )
+            ).save_cases(case_list)
         elif args.number:
             details: CaseDetails = Scraper.run_for_single_case_number(args)
-            PersistenceBuilder.get_context(
+            return PersistenceBuilder.get_context(
                 PersistenceStrategy(
                     Settings.PERSISTENCE_STRATEGY.value.upper()
                 )
             ).save_case(details)
-            return details
     finally:
         Driver.tidy_up()
 

@@ -23,8 +23,8 @@ class TestScraper(TestCase):
         output = app_main(get_parser().parse_args(single_county_run_args))
         self.assertIsNotNone(output)
 
-    def test_run_for_county(self):
-        single_county_run_args = ['-c', '49', '-y', '21', '-m', '1']
+    def test_run_for_marion_county_small_claims(self):
+        single_county_run_args = ['-c', '49', '-y', '21', '-m', '12', '-F', 'k']
         output = app_main(get_parser().parse_args(single_county_run_args))
         self.assertIsNotNone(output)
 
