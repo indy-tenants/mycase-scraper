@@ -2,18 +2,26 @@ from datetime import datetime
 from json import dump, load
 
 
+def write_json_to_file(filename: str, json_dict: dict):
+    with open(filename, 'w') as outfile:
+        dump(json_dict, outfile, indent=4)
+
+
+def read_json_from_file(filename: str) -> dict:
+    with open(filename) as json_file:
+        return load(json_file)
+
+
 class ConfigFile:
 
     def __init__(self, filename):
         self.filename = filename
 
     def write(self, json_dict: dict):
-        with open(self.filename, 'w') as outfile:
-            dump(json_dict, outfile, indent=4)
+        write_json_to_file(self.filename, json_dict)
 
     def read(self) -> dict:
-        with open(self.filename) as json_file:
-            return load(json_file)
+        return read_json_from_file(self.filename)
 
 
 def get_current_month_as_str():

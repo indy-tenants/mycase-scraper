@@ -5,7 +5,7 @@ from gotrue.types import Session, User
 from loguru import logger
 from supabase.client import Client, create_client
 
-from db.supabase import SupabaseStrategy
+from db.supabase_strategy import SupabaseStrategy
 from mycase_scraper.utils.utils import ConfigFile
 from settings import Settings
 

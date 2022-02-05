@@ -19,7 +19,7 @@ class Settings(Enum):
     CHROME_HEADLESS = getenv('CHROME_HEADLESS') or True
 
     # DB General
-    PERSISTENCE_STRATEGY = getenv('PERSISTENCE_STRATEGY')
+    PERSISTENCE_STRATEGY = getenv('PERSISTENCE_STRATEGY').upper() or 'LIGHT_DB'
 
     # Google sheets
     GOOGLE_SERVICE_ACCOUNT_PATH = getenv('GOOGLE_SERVICE_ACCOUNT_PATH')
@@ -34,6 +34,8 @@ class Settings(Enum):
 
     # Sqlite3
     SQLITE3_FILE_NAME = join(APP_HOME_DIRECTORY, 'db.sqlite3')
+
+    LIGHT_DB_PATH = getenv('LIGHT_DB_PATH') or join(APP_HOME_DIRECTORY, 'tinydb.json')
 
 
 logger.debug(f'Using settings {Settings}')

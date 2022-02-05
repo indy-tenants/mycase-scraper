@@ -55,8 +55,13 @@ class Driver:
 
     @classmethod
     def tidy_up(cls):
-        del cls._driver
-        del cls._instance
+        try:
+            if hasattr(cls, '_instance'):
+                del cls._instance
+            if hasattr(cls, '_driver'):
+                del cls._driver
+        except AttributeError as ae:
+            logger.exception(f'Could not tidy up {ae}')
 
     def __del__(self):
         logger.debug('shutting down webdriver')
@@ -133,18 +138,21 @@ class Driver:
     def navigate_through_set_of_search_results(self):
         try:
             def check():
+                sleep(3 * SECONDS)  # TODO: Get rid of this maybe?
+
                 running_total_regex = r'(?P<lower_current>\d*) to (?P<upper_current>\d*) of (?P<total>\d*)'
 
-                running_total_match: dict = re.search(
+                running_total_match = re.search(
                     running_total_regex,
                     self.get_driver().page_source
-                ).groupdict()
+                )
 
                 if running_total_match is None:
                     logger.error('Cant find totals on screen, bailing out')
                     return True
 
-                return running_total_match['upper_current'] == running_total_match['total']
+                running_total_match_dict = running_total_match.groupdict()
+                return running_total_match_dict['upper_current'] == running_total_match_dict['total']
 
             while not check():
                 sleep(SECONDS)

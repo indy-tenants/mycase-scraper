@@ -18,20 +18,25 @@ class Scraper:
     def run_for_county(self, args: Namespace, court_type_filter) -> list[CaseDetails]:
         try:
             for court in courts_for_county(args.county, court_type_filter=court_type_filter):
-                Driver.instance().navigate_search_results_for_court(
-                    court,
-                    format_year_month(args.year, args.month)
-                )
+                self.get_search_results_from_court(court, format_year_month(args.year, args.month))
 
-            self.search_results.add_list(
-                Driver.instance().get_search_results_from_network_requests().values()
-            )
             logger.info(f'Getting details for \'{self.search_results.get_total()}\' search results')
             return self.get_details_for_search_results(
                 self.search_results
             )
         except Exception as ex:
             logger.exception(f'Exception while getting cases for county \'{args.county}\' with args {args}: {ex}')
+
+    def get_search_results_from_court(self, court_code: str, ymonth: str):
+        try:
+            Driver.instance().navigate_search_results_for_court(court_code, ymonth)
+            self.search_results.add_list(
+                Driver.instance().get_search_results_from_network_requests().values()
+            )
+        except Exception as Ex:
+            logger.exception(f'Something went wrong {Ex}')
+        finally:
+            pass
 
     def run_for_court(self, args: Namespace) -> list[CaseDetails]:
         try:
@@ -65,8 +70,7 @@ class Scraper:
             except Exception as ex:
                 logger.exception(
                     f'Exception while trying to get details for case \'{case}\' : \'{ex}\'')
-            finally:
-                return detailed_cases
+        return detailed_cases
 
     @staticmethod
     def run_for_single_case_number(args: Namespace) -> CaseDetails:
