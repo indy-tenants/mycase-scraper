@@ -1,6 +1,6 @@
 from unittest import TestCase, main
 
-from mycase_scraper.db.persistence_builder import PersistenceBuilder, PersistenceStrategy
+from db.persistence_builder import PersistenceBuilder, PersistenceStrategy
 from utils.case import CaseDetails, SearchItem
 
 

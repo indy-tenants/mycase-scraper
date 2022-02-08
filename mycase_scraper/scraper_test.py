@@ -1,7 +1,7 @@
 from unittest import TestCase, main
 
-from mycase_scraper.scraper import get_parser, main as app_main
-from mycase_scraper.utils.utils import get_current_month_as_str, get_current_year_as_str
+from scraper import get_parser, main as app_main
+from utils.utils import get_current_month_as_str, get_current_year_as_str
 
 
 class TestScraper(TestCase):

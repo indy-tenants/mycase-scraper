@@ -3,12 +3,12 @@ from argparse import ArgumentParser, Namespace
 from loguru import logger
 from selenium.common.exceptions import TimeoutException
 
-from mycase_scraper.db.persistence_builder import PersistenceBuilder, PersistenceStrategy
-from mycase_scraper.settings import Settings
-from mycase_scraper.utils.case import CaseDetails, SearchItem, SearchResults
-from mycase_scraper.utils.courts import courts_for_county
-from mycase_scraper.utils.driver import Driver
-from mycase_scraper.utils.utils import format_year_month, get_current_month_as_str, get_current_year_as_str
+from db.persistence_builder import PersistenceBuilder, PersistenceStrategy
+from settings import Settings
+from utils.case import CaseDetails, SearchItem, SearchResults
+from utils.courts import courts_for_county
+from utils.driver import Driver
+from utils.utils import format_year_month, get_current_month_as_str, get_current_year_as_str
 
 
 class Scraper:
@@ -91,7 +91,7 @@ def get_parser():
     parser.add_argument('-c', '--county',
                         help='Two digit code of county to scrape, (counties found here: https://www.in.gov/courts/rules/admin/index.html#_Toc77764569)')
     parser.add_argument('-C', '--court', help='Five alpha numeric character code identifying the court to scrape from')
-    parser.add_argument('-F', '--court-filter', dest='filter', help='Filter by court type')
+    parser.add_argument('-F', '--court-filter', dest='filter', help='Filter by court type', default='')
 
     # Time range
     parser.add_argument('-m', '--month', help='Month to focus on', default=get_current_month_as_str())

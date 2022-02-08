@@ -1,7 +1,7 @@
 from tinydb.database import TinyDB
 
-from mycase_scraper.settings import Settings
-from mycase_scraper.utils.case import CaseDetails
+from settings import Settings
+from utils.case import CaseDetails
 
 
 class TinyDBStrategy:

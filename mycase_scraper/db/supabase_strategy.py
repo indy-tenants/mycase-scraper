@@ -1,9 +1,9 @@
 from loguru import logger
 from supabase.client import Client, create_client
 
-from mycase_scraper.settings import Settings
-from mycase_scraper.utils.case import CaseDetails
-from mycase_scraper.utils.utils import ConfigFile
+from settings import Settings
+from utils.case import CaseDetails
+from utils.utils import ConfigFile
 
 
 class SupabaseStrategy:

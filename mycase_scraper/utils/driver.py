@@ -11,10 +11,10 @@ from selenium.webdriver.support.expected_conditions import presence_of_element_l
 from selenium.webdriver.support.ui import WebDriverWait
 from seleniumwire.webdriver import Chrome
 
-from mycase_scraper.settings import Settings
-from mycase_scraper.utils.builders.selector import CSSSelectorBuilder
-from mycase_scraper.utils.case import CaseDetails, SearchItem, SearchResults
-from mycase_scraper.utils.uri import URI
+from settings import Settings
+from utils.builders.selector import CSSSelectorBuilder
+from utils.case import CaseDetails, SearchItem, SearchResults
+from utils.uri import URI
 
 logger.debug('starting webdriver')
 

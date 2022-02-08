@@ -3,7 +3,7 @@ from sheetfu.client import SpreadsheetApp
 from sheetfu.model import Range
 from sheetfu.modules.table import Table
 
-from mycase_scraper.utils.case import CaseDetails, SearchItem
+from utils.case import CaseDetails, SearchItem
 
 
 class Sheets:

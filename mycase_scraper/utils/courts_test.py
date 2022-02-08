@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from mycase_scraper.utils.courts import courts_for_county
+from .courts import courts_for_county
 
 
 class TestCourts(TestCase):

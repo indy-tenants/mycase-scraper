@@ -4,8 +4,8 @@ from loguru import logger
 from peewee import BlobField, BooleanField, CharField, DateField, ForeignKeyField, IntegerField, Model, SqliteDatabase, \
     TimeField, TimestampField
 
-from mycase_scraper.settings import Settings
-from mycase_scraper.utils.case import CaseDetails
+from settings import Settings
+from utils.case import CaseDetails
 
 
 class Sqlite3Strategy:

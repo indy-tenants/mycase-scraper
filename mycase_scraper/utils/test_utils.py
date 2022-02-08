@@ -1,7 +1,7 @@
 from json import load
 from unittest import TestCase
 
-from mycase_scraper.utils.utils import ConfigFile
+from utils.utils import ConfigFile
 
 
 class TestConfigFile(TestCase):

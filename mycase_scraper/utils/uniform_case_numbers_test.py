@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from mycase_scraper.utils.uniform_case_numbers import UniformCaseNumber
+from utils.uniform_case_numbers import UniformCaseNumber
 
 
 class TestUniformCaseNumber(TestCase):

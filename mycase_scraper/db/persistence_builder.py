@@ -1,8 +1,8 @@
 from enum import Enum
 
-from mycase_scraper.db.models import Sqlite3Strategy
-from mycase_scraper.db.supabase_strategy import SupabaseStrategy
-from mycase_scraper.db.tdb_strategy import TinyDBStrategy
+from .models import Sqlite3Strategy
+from .supabase_strategy import SupabaseStrategy
+from .tdb_strategy import TinyDBStrategy
 
 
 class PersistenceStrategy(Enum):
