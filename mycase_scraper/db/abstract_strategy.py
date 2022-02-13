@@ -9,5 +9,5 @@ class AbstractPersistenceStrategy:
     def update_case(self, case: CaseDetails):
         pass
 
-    def get_case(self, ucn: str) -> CaseDetails:
+    def get_case_by_ucn(self, ucn: str) -> CaseDetails:
         pass

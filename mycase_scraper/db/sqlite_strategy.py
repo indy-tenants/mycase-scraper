@@ -4,7 +4,7 @@ from loguru import logger
 from peewee import BlobField, BooleanField, CharField, DateField, ForeignKeyField, IntegerField, Model, SqliteDatabase, \
     TimeField, TimestampField
 
-from abstract_strategy import AbstractPersistenceStrategy
+from db.abstract_strategy import AbstractPersistenceStrategy
 from settings import Settings
 from utils.case import CaseDetails
 
@@ -16,7 +16,6 @@ class Sqlite3Strategy(AbstractPersistenceStrategy):
 
     def __new__(cls):
         if cls._instance is None:
-            logger.debug('Creating connection to supabase')
             cls._instance = super(Sqlite3Strategy, cls).__new__(cls)
             try:
                 cls.db = SqliteDatabase(Settings.SQLITE3_FILE_NAME.value, pragmas={'journal_mode': 'wal'})

@@ -3,7 +3,7 @@ from typing import Union
 from mysql.connector import cursor  # noqa
 from mysql.connector.connection import MySQLConnection
 
-from abstract_strategy import AbstractPersistenceStrategy
+from db.abstract_strategy import AbstractPersistenceStrategy
 from settings import Settings
 from utils.case import CaseDetails, SearchItem
 
@@ -120,7 +120,7 @@ class PScaleStrategy(AbstractPersistenceStrategy):
     def __del__(self):
         self.cnx.close()
 
-    def execute_statement(self, sql: str, data: Union[dict, tuple]) -> list:
+    def execute_statement(self, sql: str, data: Union[dict, tuple] = None) -> list:
         _cursor: cursor = self.cnx.cursor(dictionary=True)
         _cursor.execute(sql, data)
         results = _cursor.fetchall()
@@ -134,6 +134,10 @@ class PScaleStrategy(AbstractPersistenceStrategy):
             (uniform_case_number,)
         )
         return None if len(data) == 0 else CaseDetails(SearchItem(data.pop()))
+
+    def get_active_cases_before_this_month(self) -> list:
+        active_cases = self.execute_statement('SELECT * FROM my_case_details WHERE is_active=TRUE AND file_date < CONCAT(LEFT(NOW(), 7),\'-01\')')
+        return list(map(lambda c: CaseDetails(SearchItem(c)), active_cases))
 
     def update_case(self, case: CaseDetails):
         return self.execute_statement(self._update_case_query, case.get_case_dict_for_persistence())

@@ -18,8 +18,8 @@ class TestScraper(TestCase):
         output = app_main(get_parser().parse_args(single_case_number_args))
         self.assertIsNotNone(output)
 
-    def test_run_for_court(self):
-        single_county_run_args = ['-n', '49K01-2101-EV-*']
+    def test_run_for_active(self):
+        single_county_run_args = ['-a']
         output = app_main(get_parser().parse_args(single_county_run_args))
         self.assertIsNotNone(output)
 

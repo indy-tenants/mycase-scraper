@@ -6,7 +6,7 @@ from selenium.common.exceptions import TimeoutException
 
 from db.persistence_builder import PersistenceBuilder, PersistenceStrategy
 from settings import Settings
-from utils.case import CaseDetails, SearchResults
+from utils.case import CaseDetails, SearchItem, SearchResults
 from utils.driver import Driver
 
 
@@ -25,16 +25,15 @@ class Scraper:
     # collect search results
 
     @staticmethod
-    def collect_search_results(search_term: str) -> [SearchResults]:
+    def collect_search_results(search_term: str) -> SearchResults:
         return Driver.instance().get_search_results_list(search_term)
 
     # get details
 
     @staticmethod
-    def persist_details_for_search_results(search_results: SearchResults):
-        for case in search_results.values():
-            details = Scraper.get_detailed_case_for_search_item(case)
-            details is not None and get_persistence().save_case(details)
+    def persist_details_for_search_item(search_item):
+        details = Scraper.get_detailed_case_for_search_item(search_item)
+        details is not None and get_persistence().save_case(details)
 
     @staticmethod
     def get_detailed_case_for_search_item(case) -> CaseDetails:
@@ -48,27 +47,27 @@ class Scraper:
             logger.exception(
                 f'Exception while trying to get details for case \'{case}\' : \'{ex}\'')
 
-    # Persist
-
     @staticmethod
-    def persist_case(case_details: CaseDetails):
-        case_details is not None and get_persistence().save_case(case_details)
-
-    @staticmethod
-    def scrape(args):
-        search_items: SearchResults = Scraper.collect_search_results(args.number)
+    def scrape_and_update(search_term: str):
+        search_items: SearchResults = Scraper.collect_search_results(search_term)
         for search_item in search_items.values():
-            try:
-                case: CaseDetails = get_persistence().get_case(search_item.get_case_number())
-                if case:
-                    if case.get_is_active():
-                        details = Scraper.get_detailed_case_for_search_item(search_item)
-                        details is not None and get_persistence().update_case(details)
-                else:
-                    details = Scraper.get_detailed_case_for_search_item(search_item)
-                    details is not None and get_persistence().save_case(details)
-            except IntegrityError as ie:
-                logger.exception(f'Case already exists, skipping {ie}')
+            Scraper.try_to_scrape_and_persist_details_for_search_item(search_item, True)
+
+    @staticmethod
+    def scrape_and_save(search_term: str):
+        search_items: SearchResults = Scraper.collect_search_results(search_term)
+        for search_item in search_items.values():
+            Scraper.try_to_scrape_and_persist_details_for_search_item(search_item)
+
+    @staticmethod
+    def try_to_scrape_and_persist_details_for_search_item(search_item: SearchItem, update: bool = False):
+        try:
+            if update:
+                details = Scraper.get_detailed_case_for_search_item(search_item)
+                return details is not None and get_persistence().update_case(details)
+            Scraper.persist_details_for_search_item(search_item)
+        except IntegrityError as ie:
+            logger.exception(f'Case already exists, skipping {ie}')
 
 
 def get_parser():
@@ -77,6 +76,7 @@ def get_parser():
 
     # Scope of what to scrape
     parser.add_argument('-n', '--number', help='Case Number of single case to scrape', default=Settings.APP_DEFAULT_SEARCH_TERM.value)
+    parser.add_argument('-a', '--active', help='Pull active cases from previous months', action='store_true')
     # parser.add_argument('-C', '--court', help='Five alpha numeric character code identifying the court to scrape from')
     # parser.add_argument('-F', '--court-filter', dest='filter', help='Filter by court type', default='')
 
@@ -94,13 +94,22 @@ def main(args: Namespace):
     logger.debug(f'Running with args: {args}')
 
     try:
-        if args.number:
+        if args.active:
+            # Collect active records for previous months
+            active_cases: [CaseDetails] = get_persistence().get_active_cases_before_this_month()
+            # Get and persist
+            for case in active_cases:
+                if case is not None and case.get_case_number() is not None:
+                    return Scraper.scrape_and_update(case.get_case_number())
+        elif args.number:
             if '*' not in args.number:
-                case: CaseDetails = get_persistence().get_case(args.number)
-                if case and case.get_is_active():
-                    return Scraper.scrape(args)
+                case: CaseDetails = get_persistence().get_case_by_ucn(args.number)
+                if not case:
+                    return Scraper.scrape_and_save(args.number)
+                elif case and case.get_is_active():
+                    return Scraper.scrape_and_update(args.number)
             else:
-                return Scraper.scrape(args)
+                return Scraper.scrape_and_save(args.number)
     finally:
         Driver.tidy_up()
 

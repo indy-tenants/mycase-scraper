@@ -3,7 +3,6 @@ from os import getenv
 from os.path import abspath, dirname, join
 
 from dotenv import load_dotenv
-from loguru import logger
 
 from utils.utils import format_year_month, get_current_month_as_str, get_current_year_as_str
 
@@ -35,6 +34,3 @@ class Settings(Enum):
 
     # Sqlite3
     SQLITE3_FILE_NAME = join(APP_HOME_DIRECTORY, 'db.sqlite3') # noqa
-
-
-logger.debug(f'Using settings {Settings}')

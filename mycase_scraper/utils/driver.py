@@ -29,7 +29,7 @@ USER_INPUT_TIMEOUT = 5 * MINUTES
 def get_options() -> Options:
     options = Options()
     options.headless = Settings.CHROME_HEADLESS
-    logger.debug(f'Getting options {options}')
+    logger.debug(f'Getting chrome options {str(options)}')
     return options
 
 
