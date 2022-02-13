@@ -32,3 +32,7 @@ class TestPScaleStrategy(TestCase):
             )
         )
         self.assertIsNotNone(cd)
+
+    def test_get_active_cases_before_month(self):
+        active_list = PScaleStrategy().get_active_cases_before_this_month()
+        self.assertIsNotNone(active_list)

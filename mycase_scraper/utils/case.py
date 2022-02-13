@@ -67,7 +67,7 @@ class SearchItem(AbstractDataParser):
         return bool(self.get_bool_field_from_data('IsActive'))
 
     def get_case_number(self) -> str:
-        return self.get_str_field_from_data('CaseNumber')
+        return self.get_str_field_from_data('CaseNumber') or self.get_str_field_from_data('uniform_case_number')
 
     def get_case_token(self) -> str:
         return self.get_str_field_from_data('CaseToken')
