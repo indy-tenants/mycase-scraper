@@ -1,0 +1,307 @@
+{
+  "CaseID": 1,
+  "CaseToken": "w0-9YeZcgd07BUSmvZ7_oQNPgKMU-IO0WUk2wQJL3zg1",
+  "CaseNumber": "49K01-2201-EV-ABCDEF",
+  "Court": "Center Township",
+  "FileDate": "01/13/2022",
+  "CaseStatus": "Pending",
+  "CaseStatusDate": "01/13/2022",
+  "CaseType": "EV - Evictions (Small Claims Docket)",
+  "CaseSubType": null,
+  "Style": "Village Real Estate Company v. NESTOR ANIBAL RIVERA CHINCHILLA, DAYSI JAQUELINE MONTIEL",
+  "IsActive": true,
+  "IsPublic": true,
+  "Parties": [
+    {
+      "CasePartyKey": "129158428",
+      "CaseKey": "42557128",
+      "PartyKey": "3865235",
+      "RestrictPublicView": false,
+      "Connection": 3,
+      "BaseConnKey": "PL",
+      "ExtConnCode": "PLN",
+      "ExtConnCodeDesc": "Plaintiff",
+      "ActiveWarrants": 0,
+      "Description": null,
+      "Name": "Daniels, Paul D",
+      "ExtendedName": null,
+      "DOB": null,
+      "DOD": null,
+      "Address": {
+        "ProviderName": null,
+        "Line1": "4611 Eastbourne Dr",
+        "Line2": null,
+        "Line3": null,
+        "Line4": null,
+        "City": "Indianapolis",
+        "State": "IN",
+        "Zip": "46226",
+        "Zip4": null
+      },
+      "FeePayURL": null,
+      "RemovedDate": null,
+      "RemovedReason": null,
+      "AccessCodeEligible": true,
+      "Attorneys": [
+        {
+          "AttyCasePartyID": 129158428,
+          "BarNumber": null,
+          "Lead": true,
+          "Label": null,
+          "WorkPhone": null,
+          "Name": "Pro Se",
+          "Address": null
+        }
+      ],
+      "OANs": null,
+      "FeeSummary": {
+        "Balance": "0.00",
+        "AsOf": "02/05/2022",
+        "Categories": [
+          {
+            "Key": "CC",
+            "Desc": "Court Costs and Filing Fees",
+            "Charge": "104.00",
+            "Credit": "0.00",
+            "Payment": "104.00"
+          }
+        ]
+      },
+      "Transactions": [
+        {
+          "Date": "01/19/2022",
+          "Desc": "Transaction Assessment",
+          "Amount": "104.00"
+        },
+        {
+          "Date": "01/19/2022",
+          "Desc": "Counter Payment",
+          "Amount": "(104.00)"
+        }
+      ]
+    },
+    {
+      "CasePartyKey": "129158429",
+      "CaseKey": "42557128",
+      "PartyKey": "71007659",
+      "RestrictPublicView": false,
+      "Connection": 2,
+      "BaseConnKey": "DF",
+      "ExtConnCode": "DEF",
+      "ExtConnCodeDesc": "Defendant",
+      "ActiveWarrants": 0,
+      "Description": null,
+      "Name": "Oldham, Karen D",
+      "ExtendedName": null,
+      "DOB": null,
+      "DOD": null,
+      "Address": {
+        "ProviderName": null,
+        "Line1": "4738 E 30th ST",
+        "Line2": null,
+        "Line3": null,
+        "Line4": null,
+        "City": "Indianapolis",
+        "State": "IN",
+        "Zip": "46218",
+        "Zip4": null
+      },
+      "FeePayURL": null,
+      "RemovedDate": null,
+      "RemovedReason": null,
+      "AccessCodeEligible": true,
+      "Attorneys": null,
+      "OANs": null,
+      "FeeSummary": null,
+      "Transactions": null
+    }
+  ],
+  "Attorneys": null,
+  "ShowWarrantIcon": false,
+  "CommCourtFlag": null,
+  "CiteNumbers": null,
+  "Charges": null,
+  "InvalidToken": false,
+  "CaseNotFound": false,
+  "AccessDenied": false,
+  "CaseKey": "42557128",
+  "CaseCategoryKey": "CV",
+  "CaseCategoryGroup": "Civil",
+  "CourtCode": "K01",
+  "CountyCode": "49",
+  "IsAppellateCourt": false,
+  "CaseTypeCode": "EVSC",
+  "AppearByDate": null,
+  "AccessCodeEligible": true,
+  "Bonds": null,
+  "Events": [
+    {
+      "EventKey": "663975743",
+      "CaseKey": "42557128",
+      "BaseEventType": "C",
+      "BaseEventTypeKey": "C",
+      "EventType": "QCSNEW",
+      "EventDate": "01/19/2022",
+      "EventTime": null,
+      "Description": "Case Opened as a New Filing",
+      "Judge": null,
+      "EventVolume": null,
+      "EventPage": null,
+      "NumberOfPages": null,
+      "IsDocketable": true,
+      "EventDocuments": null,
+      "CaseEvent": {
+        "EventKey": "663975743",
+        "Comment": null,
+        "Date2": null,
+        "Date2Label": "Date 2",
+        "Parties": null
+      },
+      "DispEvent": null,
+      "HearingEvent": null,
+      "JEvent": null,
+      "SEvent": null,
+      "VEvent": null,
+      "AEvent": null
+    },
+    {
+      "EventKey": "663976390",
+      "CaseKey": "42557128",
+      "BaseEventType": "C",
+      "BaseEventTypeKey": "C",
+      "EventType": "HSACT",
+      "EventDate": "01/19/2022",
+      "EventTime": null,
+      "Description": "Hearing Scheduling Activity",
+      "Judge": null,
+      "EventVolume": null,
+      "EventPage": null,
+      "NumberOfPages": null,
+      "IsDocketable": true,
+      "EventDocuments": null,
+      "CaseEvent": {
+        "EventKey": "663976390",
+        "Comment": "Eviction Hearing scheduled for 02/07/2022 at 10:30 AM.",
+        "Date2": null,
+        "Date2Label": "Date 2",
+        "Parties": null
+      },
+      "DispEvent": null,
+      "HearingEvent": null,
+      "JEvent": null,
+      "SEvent": null,
+      "VEvent": null,
+      "AEvent": null
+    },
+    {
+      "EventKey": "663976517",
+      "CaseKey": "42557128",
+      "BaseEventType": "C",
+      "BaseEventTypeKey": "C",
+      "EventType": "APP",
+      "EventDate": "01/19/2022",
+      "EventTime": null,
+      "Description": "Appearance Filed",
+      "Judge": null,
+      "EventVolume": null,
+      "EventPage": null,
+      "NumberOfPages": null,
+      "IsDocketable": true,
+      "EventDocuments": null,
+      "CaseEvent": {
+        "EventKey": "663976517",
+        "Comment": null,
+        "Date2": "01/19/2022",
+        "Date2Label": "File Stamp",
+        "Parties": [
+          {
+            "PartyLabel": "For Party",
+            "Name": "Daniels, Paul D"
+          }
+        ]
+      },
+      "DispEvent": null,
+      "HearingEvent": null,
+      "JEvent": null,
+      "SEvent": null,
+      "VEvent": null,
+      "AEvent": null
+    },
+    {
+      "EventKey": "664525528",
+      "CaseKey": "42557128",
+      "BaseEventType": "C",
+      "BaseEventTypeKey": "C",
+      "EventType": "SRS",
+      "EventDate": "01/24/2022",
+      "EventTime": null,
+      "Description": "Service Returned Served",
+      "Judge": null,
+      "EventVolume": null,
+      "EventPage": null,
+      "NumberOfPages": null,
+      "IsDocketable": true,
+      "EventDocuments": null,
+      "CaseEvent": {
+        "EventKey": "664525528",
+        "Comment": "Copy of Service left by Deputy R.Watson on 1/19/22",
+        "Date2": null,
+        "Date2Label": "Date Served",
+        "Parties": null
+      },
+      "DispEvent": null,
+      "HearingEvent": null,
+      "JEvent": null,
+      "SEvent": null,
+      "VEvent": null,
+      "AEvent": null
+    },
+    {
+      "EventKey": "663976389",
+      "CaseKey": "42557128",
+      "BaseEventType": "H",
+      "BaseEventTypeKey": "H",
+      "EventType": "HEV",
+      "EventDate": "02/07/2022",
+      "EventTime": "10:30 AM",
+      "Description": "Eviction Hearing",
+      "Judge": null,
+      "EventVolume": null,
+      "EventPage": null,
+      "NumberOfPages": null,
+      "IsDocketable": true,
+      "EventDocuments": null,
+      "CaseEvent": null,
+      "DispEvent": null,
+      "HearingEvent": {
+        "HearingEventKey": "663976389",
+        "CanceledReason": null,
+        "Comment": null,
+        "Result": null,
+        "CourtName": "Center Township",
+        "Sessions": [
+          {
+            "HearingEventKey": "663976389",
+            "HearingEventSessionKey": "31079695",
+            "SessionDate": "02/07/2022",
+            "SessionTime": "10:30 AM",
+            "DisplayText": "02/07/2022 10:30 AM, Judicial Officer: Roper, Brenda A.",
+            "CancelStatus": 0,
+            "JudicialOfficers": [
+              {
+                "JudicialOfficerKey": "75580",
+                "FormattedName": "Roper, Brenda A."
+              }
+            ]
+          }
+        ]
+      },
+      "JEvent": null,
+      "SEvent": null,
+      "VEvent": null,
+      "AEvent": null
+    }
+  ],
+  "CrossRefs": null,
+  "Related": null
+}

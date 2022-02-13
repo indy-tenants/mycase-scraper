@@ -181,14 +181,11 @@ class Driver:
         self.wait_for_search_results()
         return self.get_search_results_from_network_requests().find_by_case_number(case_num)
 
-    def get_search_results_list(self, court_code: str, year_month: str) -> SearchResults:
-        self.navigate_search_results_for_court(court_code, year_month)
-        return self.get_search_results_from_network_requests()
-
-    def navigate_search_results_for_court(self, court_code, year_month):
-        logger.debug(f'Searching for list of cases for court code {court_code}')
-        self.instance().go(URI.get_search_url_with_court_and_date(court_code, year_month))
+    def get_search_results_list(self, search_term: str) -> SearchResults:
+        logger.debug(f'Searching for list of cases for search term {search_term}')
+        self.instance().go(URI.get_case_url_for_case_number(search_term))
         self.navigate_through_set_of_search_results()
+        return self.get_search_results_from_network_requests()
 
     # Get network requests
 

@@ -4,11 +4,12 @@ from loguru import logger
 from peewee import BlobField, BooleanField, CharField, DateField, ForeignKeyField, IntegerField, Model, SqliteDatabase, \
     TimeField, TimestampField
 
+from abstract_strategy import AbstractPersistenceStrategy
 from settings import Settings
 from utils.case import CaseDetails
 
 
-class Sqlite3Strategy:
+class Sqlite3Strategy(AbstractPersistenceStrategy):
 
     db = None
     _instance = None

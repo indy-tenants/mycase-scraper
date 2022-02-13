@@ -10,3 +10,4 @@ python-dateutil~=2.8.2
 peewee~=3.14.8
 setuptools~=49.2.1
 tinydb~=4.6.1
+mysql-connector-python~=8.0.28

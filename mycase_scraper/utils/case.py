@@ -1,5 +1,6 @@
 from datetime import date, time
 from enum import Enum
+from json import dumps
 from time import strptime
 from typing import Callable, Union
 
@@ -35,7 +36,7 @@ class AbstractDataParser:
     def get_date_field_from_data(self, field: str) -> date:
         return self.get_type_field_from_data(field, lambda x: None if x is None else parse(x).date().isoformat())
 
-    def get_dict_field_from_data(self, field: str) -> dict:
+    def get_dict_field_from_data(self, field: str) -> str:
         return self.get_type_field_from_data(field, dict)
 
     def get_int_field_from_data(self, field: str) -> int:
@@ -60,12 +61,10 @@ class SearchItem(AbstractDataParser):
         return str(self._data)
 
     def get_data(self) -> dict:
-        logger.debug(f'Getting data from SearchItem of case {self.get_case_number()}')
         return self._data
 
     def get_is_active(self) -> bool:
-        is_active: bool = self.get_bool_field_from_data('IsActive')
-        return is_active if type(is_active) == bool else is_active == 'active'
+        return bool(self.get_bool_field_from_data('IsActive'))
 
     def get_case_number(self) -> str:
         return self.get_str_field_from_data('CaseNumber')
@@ -117,13 +116,13 @@ class CaseEvent(AbstractDataParser):
             'event_time'    : self.get_time_field_from_data('EventTime'),
             'description'   : self.get_str_field_from_data('Description'),
             'judge'         : self.get_str_field_from_data('Judge'),
-            'case_event'    : self.get_dict_field_from_data('CaseEvent'),
-            'hearing_event' : self.get_dict_field_from_data('HearingEvent'),
-            'disp_event'    : self.get_dict_field_from_data('DispEvent'),
-            'j_event'       : self.get_dict_field_from_data('JEvent'),
-            's_event'       : self.get_dict_field_from_data('SEvent'),
-            'v_event'       : self.get_dict_field_from_data('VEvent'),
-            'a_event'       : self.get_dict_field_from_data('AEvent'),
+            'case_event'    : dumps(self.get_dict_field_from_data('CaseEvent')),
+            'hearing_event' : dumps(self.get_dict_field_from_data('HearingEvent')),
+            'disp_event'    : dumps(self.get_dict_field_from_data('DispEvent')),
+            'j_event'       : dumps(self.get_dict_field_from_data('JEvent')),
+            's_event'       : dumps(self.get_dict_field_from_data('SEvent')),
+            'v_event'       : dumps(self.get_dict_field_from_data('VEvent')),
+            'a_event'       : dumps(self.get_dict_field_from_data('AEvent')),
         }
 
 
@@ -171,10 +170,10 @@ class CaseParty(AbstractDataParser):
             'name'                : self.get_str_field_from_data('Name'),
             'extended_name'       : self.get_str_field_from_data('ExtendedName'),
             'dob'                 : self.get_date_field_from_data('DOB'),
-            'address'             : self.get_dict_field_from_data('Address'),
+            'address'             : dumps(self.get_dict_field_from_data('Address')),
             'removed_date'        : self.get_date_field_from_data('RemovedDate'),
             'removed_reason'      : self.get_str_field_from_data('RemovedReason'),
-            'attorney'            : self.get_list_field_from_data('Attorneys'),
+            'attorney'            : dumps(self.get_list_field_from_data('Attorneys')),
         }
 
 
@@ -216,8 +215,13 @@ class CaseDetails(SearchItem):
 
     def __init__(self, search_item: SearchItem, details=None):
         super(CaseDetails, self).__init__(search_item.get_data())
-        if 'InvalidToken' in details and details.get('InvalidToken') is False:
-            self._data.update({**details, **search_item.get_data(), **{'Parties': details.get('Parties')}})
+        if details and 'InvalidToken' in details and details.get('InvalidToken') is False:
+            self._data.update({
+                **details,
+                **search_item.get_data(),  # Search item has more reliable data
+                **{'Parties': details.get('Parties')}  # Except party which is summarized
+                }
+            )
 
     def get_case_key(self) -> int:
         return self.get_int_field_from_data('CaseKey')
@@ -237,7 +241,7 @@ class CaseDetails(SearchItem):
             'is_active'           : self.get_is_active(),
             'appear_by_date'      : self.get_date_field_from_data('AppearByDate'),
             'cross_refs'          : self.get_str_field_from_data('CrossRefs'),
-            'related_case'        : self.get_str_field_from_data('Related'),
+            'related_case'        : dumps(self.get_list_field_from_data('Related')),
         }
 
     def get_events_array_for_persistence(self) -> list[dict]:

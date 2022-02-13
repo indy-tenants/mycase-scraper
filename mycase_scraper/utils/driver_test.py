@@ -23,11 +23,6 @@ class TestMyCaseDriver(TestCase):
                     request.response.headers['Content-Type']
                 )
 
-    def test_get_cases_for_49K01_jan_2021(self):
-        results = Driver.instance().get_search_results_list('49K01', 2101)
-        self.assertEqual(301, results.get_total())
-        self.assertTrue('49K01-2101-EV-000399' in results.keys())
-
     def test_get_search_result(self):
         result: SearchItem = Driver.instance().get_search_result('49K01-2101-EV-000399')
         self.assertEqual(40229763, result.get_int_field_from_data('CaseID'))
