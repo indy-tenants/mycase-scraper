@@ -5,6 +5,8 @@ from os.path import abspath, dirname, join
 from dotenv import load_dotenv
 from loguru import logger
 
+from utils.utils import format_year_month, get_current_month_as_str, get_current_year_as_str
+
 load_dotenv()
 
 
@@ -13,6 +15,8 @@ class Settings(Enum):
     # App Settings
     APP_HOME_DIRECTORY = dirname(abspath(__file__))
     APP_CONFIG_FILENAME = abspath(join(APP_HOME_DIRECTORY, 'config.json')) # noqa
+
+    APP_DEFAULT_SEARCH_TERM = f'49K01-{format_year_month(get_current_year_as_str(), get_current_month_as_str())}-EV-*'
 
     # Selenium
     CHROME_DEBUGGER_ADDRESS = getenv('CHROME_DEBUGGER_ADDRESS') or 9222

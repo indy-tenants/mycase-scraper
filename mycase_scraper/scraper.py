@@ -76,7 +76,7 @@ def get_parser():
     parser = ArgumentParser()
 
     # Scope of what to scrape
-    parser.add_argument('-n', '--number', help='Case Number of single case to scrape')
+    parser.add_argument('-n', '--number', help='Case Number of single case to scrape', default=Settings.APP_DEFAULT_SEARCH_TERM.value)
     # parser.add_argument('-C', '--court', help='Five alpha numeric character code identifying the court to scrape from')
     # parser.add_argument('-F', '--court-filter', dest='filter', help='Filter by court type', default='')
 

@@ -244,13 +244,18 @@ class CaseDetails(SearchItem):
             'related_case'        : dumps(self.get_list_field_from_data('Related')),
         }
 
-    def get_events_array_for_persistence(self) -> list[dict]:
+    def get_events_array_for_persistence(self) -> Union[None, list[dict]]:
         list_of_events = self.get_list_field_from_data('Events')
+        if list_of_events is None and isinstance():
+            return
+
         logger.debug(f'Parsing list of events {list_of_events}')
         return [CaseEvent(ce).get_dict_for_persistence() for ce in list_of_events]
 
-    def get_parties_array_for_persistence(self) -> list[dict]:
+    def get_parties_array_for_persistence(self) -> Union[None, list[dict]]:
         list_of_parties = self.get_list_field_from_data('Parties')
+        if list_of_parties is None:
+            return
         logger.debug(f'Parsing list of parties {list_of_parties}')
         return [CaseParty(cp).get_dict_for_persistence() for cp in list_of_parties]
 
